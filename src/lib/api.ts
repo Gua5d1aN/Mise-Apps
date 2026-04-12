@@ -109,3 +109,28 @@ export async function fetchIssues(): Promise<IssueLog[]> {
   if (error) { console.error('[Mise] fetchIssues:', error.message); throw new Error(error.message); }
   return (data ?? []) as IssueLog[];
 }
+
+/**
+ * Toggles the resolved state of a maintenance issue.
+ *
+ * When resolving: sets resolved = true and resolved_at = now().
+ * When re-opening: sets resolved = false and resolved_at = null.
+ *
+ * @param id       - The issue log ID to update.
+ * @param resolved - The new resolved state to set.
+ * @throws {Error} If the update fails.
+ */
+export async function resolveIssue(id: number, resolved: boolean): Promise<void> {
+  const { error } = await supabase
+    .from('issue_logs')
+    .update({
+      resolved,
+      resolved_at: resolved ? new Date().toISOString() : null,
+    })
+    .eq('id', id);
+
+  if (error) {
+    console.error('[Mise] resolveIssue:', error.message);
+    throw new Error(`Failed to update issue: ${error.message}`);
+  }
+}

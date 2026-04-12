@@ -13,7 +13,7 @@
  * @author Joshua Bosen
  */
 import { useState, useEffect, useCallback } from 'react';
-import { fetchConfig, saveConfig, fetchLogs, insertLog, deleteLogsByIds, deleteAllLogs, insertIssue, fetchIssues } from './lib/api';
+import { fetchConfig, saveConfig, fetchLogs, insertLog, deleteLogsByIds, deleteAllLogs, insertIssue, fetchIssues, resolveIssue } from './lib/api';
 import { uploadPhoto } from './lib/storage';
 import { deepClone } from './lib/utils';
 import { DEFAULT_TASKS } from './constants/defaultTasks';
@@ -290,6 +290,21 @@ export function App() {
     persistConfig(u as unknown as ChecklistConfig);
   }
 
+
+  // ── Issue resolve handler ─────────────────────────────────────────────────
+  async function handleResolveIssue(id: number, resolved: boolean) {
+    await resolveIssue(id, resolved);
+    // Update local state immediately so the UI reflects the change
+    // without needing a full refetch
+    setIssues((prev) =>
+      prev.map((issue) =>
+        issue.id === id
+          ? { ...issue, resolved, resolved_at: resolved ? new Date().toISOString() : null }
+          : issue,
+      ),
+    );
+  }
+
   // ── Admin deletion ───────────────────────────────────────────────────────
   async function handleDeleteSelected(ids: number[]) {
     await deleteLogsByIds(ids);
@@ -398,6 +413,7 @@ export function App() {
           onToggleShiftEnabled={toggleShiftEnabled}
           onAddSection={addSection} onRemoveSection={removeSection}
           getSections={getSections}
+          onResolveIssue={handleResolveIssue}
         />
       )}
     </>

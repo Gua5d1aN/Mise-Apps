@@ -43,6 +43,7 @@ interface AdminPageProps {
   onAddSection: (loc: string, name: string) => void;
   onRemoveSection: (loc: string, sec: string) => void;
   getSections: (loc: string) => string[];
+  onResolveIssue: (id: number, resolved: boolean) => Promise<void>;
 }
 
 export function AdminPage({
@@ -53,6 +54,7 @@ export function AdminPage({
   onUpdateTaskText, onToggleTaskPhoto, onSetExamplePhoto,
   onRemoveTask, onAddTask, onToggleShiftEnabled,
   onAddSection, onRemoveSection, getSections,
+  onResolveIssue,
 }: AdminPageProps) {
 
   // ── Tab state ────────────────────────────────────────────────────────────
@@ -67,6 +69,7 @@ export function AdminPage({
   // ── Issue state ──────────────────────────────────────────────────────────
   const [issueFilterDate, setIssueFilterDate] = useState('All');
   const [issueFilterName, setIssueFilterName] = useState('');
+  const [issueStatusFilter, setIssueStatusFilter] = useState<'open' | 'resolved' | 'all'>('open');
   const [expandedIssueId, setExpandedIssueId] = useState<number | null>(null);
 
   // ── Edit state ───────────────────────────────────────────────────────────
@@ -85,6 +88,11 @@ export function AdminPage({
   const { groups: logGroups, keys: logKeys } = groupLogsByDate(logs);
 
   const filteredIssues = issues.filter((issue) => {
+    const statusOk =
+      issueStatusFilter === 'all' ||
+      (issueStatusFilter === 'open' && !issue.resolved) ||
+      (issueStatusFilter === 'resolved' && issue.resolved);
+    if (!statusOk) return false;
     const d = new Date(issue.created_at);
     const now = new Date();
     const dateOk =
@@ -312,6 +320,31 @@ export function AdminPage({
         {/* ── Issue Log ────────────────────────────────────────────────── */}
         {activeTab === 'issues' && (
           <div>
+            {/* Status filter pills */}
+            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+              {(['open', 'resolved', 'all'] as const).map((s) => {
+                const labels = { open: 'Open', resolved: 'Resolved', all: 'All' };
+                const on = issueStatusFilter === s;
+                return (
+                  <button
+                    key={s}
+                    onClick={() => setIssueStatusFilter(s)}
+                    type="button"
+                    style={{
+                      background: on ? (s === 'resolved' ? C.teal : s === 'open' ? C.pink : C.surface) : C.surface,
+                      boxShadow: on ? (s === 'resolved' ? SH.teal : s === 'open' ? SH.pink : SH.upSm) : SH.upSm,
+                      border: 'none', borderRadius: '10px', padding: '0.45rem 0.875rem',
+                      fontSize: '0.72rem', fontWeight: on ? 600 : 500,
+                      color: on ? (s === 'all' ? C.t2 : '#0C0A22') : C.t3,
+                      cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.18s',
+                    }}
+                  >
+                    {labels[s]}
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Issue filters */}
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
               <input
@@ -344,28 +377,66 @@ export function AdminPage({
                   return (
                     <div
                       key={issue.id}
-                      style={{ background: C.surface, boxShadow: SH.upMd, borderRadius: '14px', padding: '0.875rem 1rem', marginBottom: '0.5rem', cursor: 'pointer', transition: 'all 0.18s' }}
+                      style={{
+                        background: issue.resolved ? 'rgba(13,216,196,0.06)' : C.surface,
+                        boxShadow: issue.resolved ? SH.downSm : SH.upMd,
+                        borderRadius: '14px', padding: '0.875rem 1rem', marginBottom: '0.5rem',
+                        cursor: 'pointer', transition: 'all 0.22s',
+                        border: issue.resolved ? '1px solid rgba(13,216,196,0.2)' : '1px solid transparent',
+                        opacity: issue.resolved ? 0.75 : 1,
+                      }}
                       onClick={() => setExpandedIssueId(isExpanded ? null : issue.id)}
                     >
                       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
-                        {/* Camera icon */}
-                        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(196,128,58,0.1)', border: '1px solid rgba(196,128,58,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <rect x="2" y="5" width="12" height="8" rx="1.5" stroke={C.amber} strokeWidth="1.25" />
-                            <circle cx="8" cy="9" r="2" stroke={C.amber} strokeWidth="1.25" />
-                            <path d="M6 5l1-2h2l1 2" stroke={C.amber} strokeWidth="1.25" strokeLinejoin="round" />
-                          </svg>
+                        {/* Camera icon — teal when resolved, amber when open */}
+                        <div style={{
+                          width: '36px', height: '36px', borderRadius: '10px',
+                          background: issue.resolved ? 'rgba(13,216,196,0.1)' : 'rgba(196,128,58,0.1)',
+                          border: `1px solid ${issue.resolved ? 'rgba(13,216,196,0.25)' : 'rgba(196,128,58,0.2)'}`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                        }}>
+                          {issue.resolved
+                            ? <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 4" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            : <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="5" width="12" height="8" rx="1.5" stroke={C.amber} strokeWidth="1.25"/><circle cx="8" cy="9" r="2" stroke={C.amber} strokeWidth="1.25"/><path d="M6 5l1-2h2l1 2" stroke={C.amber} strokeWidth="1.25" strokeLinejoin="round"/></svg>
+                          }
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: '0.875rem', fontWeight: 500, color: C.t1, marginBottom: '0.15rem' }}>{issue.item_name}</div>
-                          <div style={{ fontSize: '0.68rem', color: C.t3 }}>Logged by {issue.name}</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: 500, color: issue.resolved ? C.t3 : C.t1, marginBottom: '0.15rem', textDecoration: issue.resolved ? 'line-through' : 'none' }}>{issue.item_name}</div>
+                          <div style={{ fontSize: '0.68rem', color: C.t4 }}>Logged by {issue.name}</div>
+                          {issue.resolved && issue.resolved_at && (
+                            <div style={{ fontSize: '0.63rem', color: C.teal, marginTop: '0.2rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 4" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                              Resolved {new Date(issue.resolved_at).toLocaleString('en-AU', { dateStyle: 'short', timeStyle: 'short' })}
+                            </div>
+                          )}
                         </div>
-                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem', flexShrink: 0 }}>
                           <div style={{ fontSize: '0.63rem', color: C.t4 }}>
                             {new Date(issue.created_at).toLocaleString('en-AU', { hour: '2-digit', minute: '2-digit' })}
                           </div>
-                          {issue.photo_url && (
-                            <div style={{ width: '46px', height: '46px', borderRadius: '8px', marginTop: '0.35rem', background: C.well, boxShadow: SH.downSm, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {/* Resolve toggle button */}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); void onResolveIssue(issue.id, !issue.resolved); }}
+                            type="button"
+                            style={{
+                              background: issue.resolved ? 'rgba(13,216,196,0.12)' : C.surface,
+                              boxShadow: issue.resolved ? 'inset 2px 2px 5px rgba(0,0,0,0.3)' : SH.upSm,
+                              border: `1px solid ${issue.resolved ? 'rgba(13,216,196,0.3)' : 'rgba(255,255,255,0.06)'}`,
+                              borderRadius: '8px', padding: '0.3rem 0.625rem',
+                              fontSize: '0.65rem', fontWeight: 600,
+                              color: issue.resolved ? C.teal : C.t3,
+                              cursor: 'pointer', fontFamily: 'inherit',
+                              display: 'flex', alignItems: 'center', gap: '4px',
+                              transition: 'all 0.18s', whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {issue.resolved
+                              ? <><svg width="9" height="9" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 4" stroke={C.teal} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg> Fixed</>
+                              : 'Mark fixed'
+                            }
+                          </button>
+                          {issue.photo_url && !issue.resolved && (
+                            <div style={{ width: '46px', height: '46px', borderRadius: '8px', background: C.well, boxShadow: SH.downSm, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <rect x="2" y="5" width="12" height="8" rx="1.5" stroke={C.amber} strokeWidth="1.25" />
                                 <circle cx="8" cy="9" r="2" stroke={C.amber} strokeWidth="1.25" />

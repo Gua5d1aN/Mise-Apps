@@ -120,10 +120,20 @@ export interface IssueLog {
   name: string;
   item_name: string;
   photo_url: string | null;
+  /**
+   * Whether an admin has marked this issue as resolved / fixed.
+   * Defaults to false on insert. Toggled from the admin Issue Log tab.
+   */
+  resolved: boolean;
+  /**
+   * Timestamp of when resolved was set, or null if still open.
+   * Set server-side via the resolveIssue API function.
+   */
+  resolved_at: string | null;
 }
 
-/** The insert shape for a new issue log. */
-export type IssueLogInsert = Omit<IssueLog, 'id' | 'created_at'>;
+/** The insert shape — resolved and resolved_at are server-side defaults. */
+export type IssueLogInsert = Omit<IssueLog, 'id' | 'created_at' | 'resolved' | 'resolved_at'>;
 
 // ─── App Navigation Types ─────────────────────────────────────────────────────
 
