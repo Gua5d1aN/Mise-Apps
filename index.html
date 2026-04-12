@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="theme-color" content="#181530" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Mise" />
+    <meta name="description" content="Mise — Hospitality operations platform. Section checklists and maintenance logs." />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <!--
+      Clash Grotesk loaded via Fontsource. Only weights 400/500/600 to keep
+      the font payload lean. Falls back to system-ui if CDN is unavailable.
+    -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/clash-grotesk@5/400.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/clash-grotesk@5/500.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/clash-grotesk@5/600.css" />
+    <title>Mise</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <!--
+      Service worker registration for PWA offline support.
+      sw.js must be present in the public/ folder.
+      Phase 4 will implement proper offline-first caching for checklists.
+    -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('/sw.js').catch(function () {
+            // SW registration failure is non-fatal — app works online without it
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,103 @@
+/**
+ * Default task lists for 1 Hotel Melbourne — all locations, sections, all 6 shifts.
+ *
+ * This is the fallback when no Supabase config exists yet. Once admins save
+ * any change in the Edit Checklists panel, Supabase becomes the source of truth.
+ *
+ * Overnight / Weekly / Bi-Weekly / Monthly shifts start empty by design —
+ * admins fill them in as required for their venue's specific needs.
+ *
+ * @author Joshua Bosen
+ */
+import type { ChecklistConfig } from '../types';
+import { DEFAULT_ENABLED } from './index';
+
+const e = { ...DEFAULT_ENABLED };
+
+export const DEFAULT_TASKS: ChecklistConfig = {
+  Kitchen: {
+    _sections: ['Grill', 'Larder', 'Pans', 'Fryer', 'Overnight Only'],
+    Grill: {
+      _enabled: { ...e },
+      Opening:    [{ text: 'Light and calibrate grill to temp', requiresPhoto: false },{ text: 'Clean grill grates and drip trays', requiresPhoto: false },{ text: 'Check protein par and pull from cool room', requiresPhoto: false },{ text: 'Set up sauces and seasoning mise en place', requiresPhoto: false },{ text: 'Review service notes and specials', requiresPhoto: false }],
+      Closing:    [{ text: 'Cool down and brush grill grates', requiresPhoto: false },{ text: 'Empty and clean drip trays', requiresPhoto: false },{ text: 'Wrap and store all proteins correctly', requiresPhoto: false },{ text: 'Wipe down entire grill station', requiresPhoto: false },{ text: 'Complete section temp log', requiresPhoto: false }],
+      Overnight:  [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+    Larder: {
+      _enabled: { ...e },
+      Opening:    [{ text: 'Check and rotate all larder mise en place', requiresPhoto: false },{ text: 'Portion and label salads and cold starters', requiresPhoto: false },{ text: 'Confirm garnish stock and prep as needed', requiresPhoto: false },{ text: 'Check dressings and cold sauces', requiresPhoto: false },{ text: 'Review covers and allergy flags', requiresPhoto: false }],
+      Closing:    [{ text: 'Wrap and date all open products', requiresPhoto: false },{ text: 'Clean and sanitise larder benches and boards', requiresPhoto: false },{ text: 'Store all mise en place correctly', requiresPhoto: false },{ text: 'Check fridge temps and log', requiresPhoto: false },{ text: 'Clear ice bath and dry thoroughly', requiresPhoto: false }],
+      Overnight:  [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+    Pans: {
+      _enabled: { ...e },
+      Opening:    [{ text: 'Confirm burner function across all rings', requiresPhoto: false },{ text: 'Set up sauces, stocks and mise en place', requiresPhoto: false },{ text: 'Check pan and utensil stock', requiresPhoto: false },{ text: 'Pull and check proteins for service', requiresPhoto: false },{ text: 'Review daily specials and timing', requiresPhoto: false }],
+      Closing:    [{ text: 'Deglaze and clean all pans', requiresPhoto: false },{ text: 'Wipe down stove tops and burners', requiresPhoto: false },{ text: 'Store remaining sauces and stocks correctly', requiresPhoto: false },{ text: 'Clean and return all utensils', requiresPhoto: false },{ text: 'Wipe down full station surface', requiresPhoto: false }],
+      Overnight:  [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+    Fryer: {
+      _enabled: { ...e },
+      Opening:    [{ text: 'Check oil quality and top up if needed', requiresPhoto: false },{ text: 'Heat fryers to correct temp and log reading', requiresPhoto: false },{ text: 'Set up crumbing and battering station', requiresPhoto: false },{ text: 'Check frozen and fresh product levels', requiresPhoto: false },{ text: 'Confirm holding equipment is functional', requiresPhoto: false }],
+      Closing:    [{ text: 'Filter or change oil as required', requiresPhoto: false },{ text: 'Cool fryers fully before covering', requiresPhoto: false },{ text: 'Clean baskets and exterior thoroughly', requiresPhoto: false },{ text: 'Dispose of waste oil correctly', requiresPhoto: false },{ text: 'Complete oil change log', requiresPhoto: false }],
+      Overnight:  [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+    'Overnight Only': {
+      _enabled: { ...e, Opening: false, Closing: false, Overnight: true },
+      Opening: [], Closing: [], Overnight: [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+  } as unknown as ChecklistConfig[string],
+
+  FOH: {
+    _sections: ['Floor', 'Host / Reception', 'Terrace'],
+    Floor: {
+      _enabled: { ...e },
+      Opening:    [{ text: 'Set all tables to restaurant standard', requiresPhoto: false },{ text: 'Polish glassware and cutlery', requiresPhoto: false },{ text: 'Check reservations and flag dietary requirements', requiresPhoto: false },{ text: 'Brief team on specials and 86d items', requiresPhoto: false },{ text: 'Confirm menus are clean and current', requiresPhoto: false }],
+      Closing:    [{ text: 'Clear, clean and reset all tables', requiresPhoto: false },{ text: 'Return all glassware and linen to storage', requiresPhoto: false },{ text: 'Complete section side duties', requiresPhoto: false },{ text: 'Log any guest feedback or incidents', requiresPhoto: false },{ text: 'Leave handover notes for next shift', requiresPhoto: false }],
+      Overnight:  [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+    'Host / Reception': {
+      _enabled: { ...e },
+      Opening:    [{ text: 'Review full reservation sheet for the day', requiresPhoto: false },{ text: 'Confirm covers, table allocations and special requests', requiresPhoto: false },{ text: 'Brief floor team on VIPs and dietary flags', requiresPhoto: false },{ text: 'Ensure reception area is clean and presentable', requiresPhoto: false },{ text: 'Test reservation system and phone line', requiresPhoto: false }],
+      Closing:    [{ text: 'Confirm all reservations actioned and noted', requiresPhoto: false },{ text: 'Update any no-shows or walk-ins in system', requiresPhoto: false },{ text: 'Leave handover notes for next shift', requiresPhoto: false },{ text: 'Secure reservation records', requiresPhoto: false },{ text: 'Tidy and reset reception area', requiresPhoto: false }],
+      Overnight:  [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+    Terrace: {
+      _enabled: { ...e },
+      Opening:    [{ text: 'Check weather and confirm terrace is open', requiresPhoto: false },{ text: 'Set terrace tables and chairs to standard', requiresPhoto: false },{ text: 'Confirm heaters or umbrellas are operational', requiresPhoto: false },{ text: 'Check terrace menus are clean and stocked', requiresPhoto: false },{ text: 'Ensure terrace is swept and clear of debris', requiresPhoto: false }],
+      Closing:    [{ text: 'Clear and stack all terrace furniture', requiresPhoto: false },{ text: 'Store cushions and linens correctly', requiresPhoto: false },{ text: 'Secure heaters and umbrellas', requiresPhoto: false },{ text: 'Sweep terrace and dispose of waste', requiresPhoto: false },{ text: 'Lock terrace access', requiresPhoto: false }],
+      Overnight:  [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+  } as unknown as ChecklistConfig[string],
+
+  Bar: {
+    _sections: ['Crane Bar', 'Back Bar', 'LVL1 Bar'],
+    'Crane Bar': {
+      _enabled: { ...e },
+      Opening:    [{ text: 'Restock bar fridge to par', requiresPhoto: false },{ text: 'Check spirits, liqueurs and garnish levels', requiresPhoto: false },{ text: 'Prep fresh juices and house syrups', requiresPhoto: false },{ text: 'Polish all glassware', requiresPhoto: false },{ text: 'Test bar equipment including taps, blenders and ice machine', requiresPhoto: false }],
+      Closing:    [{ text: 'Discard perishable garnishes', requiresPhoto: false },{ text: 'Wrap and refrigerate juices and syrups', requiresPhoto: false },{ text: 'Wipe down full bar surface and taps', requiresPhoto: false },{ text: 'Cash up bar POS and reconcile', requiresPhoto: false },{ text: 'Complete waste log', requiresPhoto: false }],
+      Overnight:  [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+    'Back Bar': {
+      _enabled: { ...e },
+      Opening:    [{ text: 'Check back bar stock levels and restock', requiresPhoto: false },{ text: 'Confirm all spirits and liqueurs are labelled', requiresPhoto: false },{ text: 'Ensure back bar fridge is at correct temp', requiresPhoto: false },{ text: 'Restock bar consumables including straws, napkins and picks', requiresPhoto: false },{ text: 'Clean and organise back bar storage', requiresPhoto: false }],
+      Closing:    [{ text: 'Lock spirits fridge and back bar storage', requiresPhoto: false },{ text: 'Restock for next shift where possible', requiresPhoto: false },{ text: 'Wipe down all back bar surfaces', requiresPhoto: false },{ text: 'Reconcile any stock variances', requiresPhoto: false },{ text: 'Secure and lock back bar area', requiresPhoto: false }],
+      Overnight:  [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+    'LVL1 Bar': {
+      _enabled: { ...e },
+      Opening:    [{ text: 'Restock LVL1 bar fridge to par', requiresPhoto: false },{ text: 'Check spirit and mixer levels', requiresPhoto: false },{ text: 'Set up bar snacks and garnish station', requiresPhoto: false },{ text: 'Polish glassware and set bar to standard', requiresPhoto: false },{ text: 'Test POS and confirm menu is current', requiresPhoto: false }],
+      Closing:    [{ text: 'Clear and clean full bar top', requiresPhoto: false },{ text: 'Wrap and store all perishables', requiresPhoto: false },{ text: 'Cash up LVL1 POS', requiresPhoto: false },{ text: 'Lock bar fridges and spirit storage', requiresPhoto: false },{ text: 'Complete end-of-shift handover note', requiresPhoto: false }],
+      Overnight:  [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+  } as unknown as ChecklistConfig[string],
+
+  IRD: {
+    _sections: ['IRD'],
+    IRD: {
+      _enabled: { ...e },
+      Opening:    [{ text: 'Check tray setup and linen stock', requiresPhoto: false },{ text: 'Confirm delivery equipment is clean and ready', requiresPhoto: false },{ text: 'Review incoming orders for the shift', requiresPhoto: false },{ text: 'Confirm lift access and floor coverage plan', requiresPhoto: false },{ text: 'Brief team on menu updates or item availability', requiresPhoto: false }],
+      Closing:    [{ text: 'Collect all outstanding trays from guest floors', requiresPhoto: false },{ text: 'Log any unreturned items or breakages', requiresPhoto: false },{ text: 'Store trays and equipment correctly', requiresPhoto: false },{ text: 'Complete shift order log', requiresPhoto: false },{ text: 'Leave handover notes for overnight team', requiresPhoto: false }],
+      Overnight:  [], Weekly: [], 'Bi-Weekly': [], Monthly: [],
+    },
+  } as unknown as ChecklistConfig[string],
+};
