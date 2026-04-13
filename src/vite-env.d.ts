@@ -28,6 +28,12 @@ interface ImportMetaEnv {
    * Replaced by Supabase Auth in Phase 3.
    */
   readonly VITE_ADMIN_PW: string;
+  /**
+   * UUID of the current organisation from the organisations table.
+   * Added in Phase 2. Included in every DB query for data isolation.
+   * Phase 3 reads this from the authenticated user session instead.
+   */
+  readonly VITE_ORG_ID: string;
 }
 
 interface ImportMeta {

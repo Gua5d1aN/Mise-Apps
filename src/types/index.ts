@@ -88,12 +88,12 @@ export interface TaskLogEntry {
 
 /**
  * A complete checklist submission row from the checklist_logs table.
- *
- * Phase 2 note: org_id will be added here for multi-tenant scoping.
  */
 export interface ChecklistLog {
   id: number;
   created_at: string;
+  /** UUID of the organisation this log belongs to. Added in Phase 2. */
+  org_id: string;
   name: string;
   location: string;
   section: string;
@@ -103,8 +103,11 @@ export interface ChecklistLog {
   tasks: TaskLogEntry[];
 }
 
-/** The insert shape for a new checklist log — omits server-generated fields. */
-export type ChecklistLogInsert = Omit<ChecklistLog, 'id' | 'created_at'>;
+/**
+ * The insert shape for a new checklist log.
+ * org_id is stamped automatically by api.ts — callers do not supply it.
+ */
+export type ChecklistLogInsert = Omit<ChecklistLog, 'id' | 'created_at' | 'org_id'>;
 
 // ─── Maintenance / Issue Log Types ────────────────────────────────────────────
 
@@ -117,6 +120,8 @@ export type ChecklistLogInsert = Omit<ChecklistLog, 'id' | 'created_at'>;
 export interface IssueLog {
   id: number;
   created_at: string;
+  /** UUID of the organisation this issue belongs to. Added in Phase 2. */
+  org_id: string;
   name: string;
   item_name: string;
   photo_url: string | null;
@@ -132,8 +137,25 @@ export interface IssueLog {
   resolved_at: string | null;
 }
 
-/** The insert shape — resolved and resolved_at are server-side defaults. */
-export type IssueLogInsert = Omit<IssueLog, 'id' | 'created_at' | 'resolved' | 'resolved_at'>;
+/**
+ * The insert shape for a new issue log.
+ * org_id is stamped automatically by api.ts — callers do not supply it.
+ */
+export type IssueLogInsert = Omit<IssueLog, 'id' | 'created_at' | 'org_id' | 'resolved' | 'resolved_at'>;
+
+// ─── Organisation Types ───────────────────────────────────────────────────────
+
+/**
+ * A row from the organisations table.
+ * Represents a single venue or hotel group using Mise.
+ */
+export interface Organisation {
+  id: string;
+  name: string;
+  slug: string;
+  plan: 'starter' | 'pro' | 'studio' | 'enterprise';
+  created_at: string;
+}
 
 // ─── App Navigation Types ─────────────────────────────────────────────────────
 
