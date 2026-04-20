@@ -1,7 +1,3 @@
-/**
- * Barrel export for all UI primitive components.
- * @author Joshua Bosen
- */
 export { Wordmark } from './Wordmark';
 export { NavBar } from './NavBar';
 export { Frame } from './Frame';

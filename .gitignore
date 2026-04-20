@@ -1,24 +1,6 @@
-# Dependencies
-node_modules/
-
-# Build output
-dist/
-
-# ⚠️  Environment variables — NEVER commit these to git.
-# They contain credentials and will be exposed in your public repo.
+node_modules
+dist
 .env.local
 .env.*.local
-
-# Editor & OS
-.vscode/
+*.log
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*

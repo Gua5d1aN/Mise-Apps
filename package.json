@@ -3,7 +3,6 @@
   "private": true,
   "version": "1.0.0",
   "author": "Joshua Bosen",
-  "description": "Mise Checklists — Section opening and closing checklist app for hospitality venues.",
   "type": "module",
   "scripts": {
     "dev": "vite",
