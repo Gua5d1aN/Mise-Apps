@@ -145,7 +145,14 @@ export async function fetchAdminAccounts(): Promise<AdminAccount[]> {
     throw new Error(error.message);
   }
 
-  return (data ?? []) as AdminAccount[];
+  // The RPC returns admin_name / admin_role (aliased) — remap to match the interface.
+  return (data ?? []).map((r: { id: number; admin_name: string; admin_role: string; locations: string[] | null; created_at: string }) => ({
+    id: r.id,
+    name: r.admin_name,
+    role: r.admin_role as 'admin' | 'owner',
+    locations: r.locations ?? [],
+    created_at: r.created_at,
+  }));
 }
 
 export async function createAdminAccount(
